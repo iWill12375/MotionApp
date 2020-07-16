@@ -63,11 +63,21 @@ public class Ad_vector {
 		return false;
 	}
 	public double getSquare() {
-		return x*x+y*y;
+		return x*x + y*y;
 	}
 	public void numMul(double k)
 	{
 		x = x*k;
 		y = y*k;
+	}
+	public void Add(Ad_vector v2)
+	{
+		x = x + v2.getX();
+		y = y + v2.getY();
+	}
+	public void Sub(Ad_vector v2)
+	{
+		x = x - v2.getX();
+		y = y - v2.getY();
 	}
 }

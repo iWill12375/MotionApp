@@ -12,6 +12,8 @@ public class Ball extends Ellipse2D.Double {
 	private Color color;
 	private Ad_vector currentP;
 	private double currentE;
+	//add a attribute acceleration
+	private Ad_vector acceleration;
 	
 	public Ball(double x,double y,double r,double mm,Color cc)
 	{
@@ -20,7 +22,8 @@ public class Ball extends Ellipse2D.Double {
 		color = cc;
 		m = mm;
 		location = new Ad_vector(x,y);
-		speed = new Ad_vector(ro.nextInt(9),ro.nextInt(5));
+		speed = new Ad_vector(ro.nextInt(3),ro.nextInt(3));
+		acceleration = new Ad_vector(0,0);
 		currentP = new Ad_vector(m*speed.getX(),m*speed.getY());
 		currentE = m*speed.getSquare();
 	}
@@ -68,6 +71,18 @@ public class Ball extends Ellipse2D.Double {
 		currentP.set(m*speed.getX(),m*speed.getY());
 		currentE = m*speed.getSquare();
 	}
+	public void setAcceleration(double ax,double ay)
+	{
+		acceleration.set(ax, ay);
+	}
+	public void setAccelerationX(double ax)
+	{
+		acceleration.setX(ax);
+	}
+	public void setAccelerationY(double ay)
+	{
+		acceleration.setY(ay);
+	}
 	public Color getColor() {
 		return color;
 	}
@@ -75,7 +90,12 @@ public class Ball extends Ellipse2D.Double {
 		return currentE;
 	}
 	public void updateLocation() {
-		location.setX(location.getX()+speed.getX());
-		location.setY(location.getY()+speed.getY());
+		location.Add(speed);
+	}
+	public void updateSpeed() {
+		speed.Add(acceleration);
+	}
+	public Ad_vector getAcceleration() {
+		return acceleration;
 	}
 }

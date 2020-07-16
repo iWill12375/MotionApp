@@ -7,6 +7,7 @@ import java.awt.geom.Ellipse2D.Double;
 import java.util.Random;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
 public class graph_engine {
 	public static void main(String[] args) {
 		// TODO 自动生成的方法存根
@@ -17,17 +18,54 @@ public class graph_engine {
 		JButton b1 = new JButton("B1");
 		b1.setSize(30, 20);
 		SuperPanel mp = new SuperPanel();
+		//TestPanel mp = new TestPanel(100,100,20);
 		mywin.add(mp);
 		//mp.setBackground(Color.BLACK);
 		mywin.setLocation(300, 200);
-		mywin.setSize(600, 400);
+		mywin.setSize(800, 600);
 		mywin.setResizable(false);
+		mywin.setLocationRelativeTo(null);
 		mywin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mywin.setVisible(true);
-		while(true)
-		{
-			mp.RunningTime();
+		try {
+			while(true)
+			{
+				mp.RunningTime();
+			}
 		}
+		catch(AWTException ex)
+		{
+			JDialog jd = new JDialog(mywin,"system unstable",true);
+			jd.setSize(200, 100);
+			jd.setLocationByPlatform(true);
+			jd.add(new JLabel("engine over flow!"),BorderLayout.CENTER);
+			jd.setVisible(true);
+		}
+	}
+}
+
+class TestPanel extends JPanel{
+	private Ellipse2D.Double ee;
+	private double r;
+	public TestPanel(double x,double y,double rr)
+	{
+		r = rr;
+		ee = new Ellipse2D.Double(x-r,y-r,2*r,2*r);
+		this.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				ee.setFrame(e.getX()-r, e.getY()-r, 2*r, 2*r);
+				repaint();
+			}
+		});
+	}
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.fill(ee);
 	}
 }
 
@@ -35,9 +73,11 @@ class SuperPanel extends JPanel {
 	private double X;
 	private double Y;
 	private double E_total;
-	Ball ball1;
-	Ball ball2;
-	CrushDetect detecter;
+	private Ball ball1;
+	private Ball ball2;
+	private CrushDetect detecter;
+	private Ellipse2D.Double ball;
+	private ForceField G;
 	
 	
 	public void Correct()
@@ -206,16 +246,19 @@ class SuperPanel extends JPanel {
 		
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setPaint(ball1.getColor());
-		g2.fill(new Ellipse2D.Double(ball1.getLocation().getX()-ball1.getR(),ball1.getLocation().getY()-ball1.getR(),2*ball1.getR(),2*ball1.getR()));
+		ball.setFrame(ball1.getLocation().getX()-ball1.getR(),ball1.getLocation().getY()-ball1.getR(),2*ball1.getR(),2*ball1.getR());
+		g2.fill(ball);
 		g2.setPaint(ball2.getColor());
-		g2.fill(new Ellipse2D.Double(ball2.getLocation().getX()-ball2.getR(),ball2.getLocation().getY()-ball2.getR(),2*ball2.getR(),2*ball2.getR()));
+		ball.setFrame(ball2.getLocation().getX()-ball2.getR(),ball2.getLocation().getY()-ball2.getR(),2*ball2.getR(),2*ball2.getR());
+		g2.fill(ball);
 	}
 	//control the move of two balls
-	public void RunningTime() {
+	public void RunningTime() throws AWTException {
 		
 		if(ball1.getE()+ball2.getE()>E_total+1)
 		{
-			System.exit(0);
+			//JDialog reminder = new JDialog(this,"System is unstable",true);
+			//throw new AWTException("unnamed");
 		}
 		if(detecter.isCrushed(ball1, ball2))
 		{
@@ -245,6 +288,12 @@ class SuperPanel extends JPanel {
 			ball2.setLocation(formal_X2-ball2.getSpeed().getX()*ratio, formal_Y2-ball2.getSpeed().getY()*ratio);
 		}
 		//System.out.println("current Engine = "+(ball1.getE()+ball2.getE())+" total Engine = "+E_total);
+		G.updateSource(ball2.getLocation(), ball2.getWeight());
+		G.accelerationGenerate(ball1);
+		G.updateSource(ball1.getLocation(), ball1.getWeight());
+		G.accelerationGenerate(ball2);
+		ball1.updateSpeed();
+		ball2.updateSpeed();
 		repaint();
 		try {
 			Thread.sleep(15);
@@ -253,18 +302,19 @@ class SuperPanel extends JPanel {
 			e.printStackTrace();
 		}
 	}
-		
+	
 	//initial the info
 	public SuperPanel() {
-		
+		ball = new Ellipse2D.Double(0,0,1,1);
 		X = this.getSize().width;
 		Y = this.getSize().height;
-		ball1 = new Ball(60,90,20,100,Color.BLUE);
-		ball2 = new Ball(100,75,20,120,Color.yellow);
-		//ball1.setSpeed(-5, 0);
-		//ball2.setSpeed(4, 0);
+		ball1 = new Ball(500,400,10,10000,Color.RED);
+		ball2 = new Ball(250,300,5,10,Color.green);
+		//ball1.setSpeed(0, 0);
+		//ball2.setSpeed(0, 4.5);
 		E_total = ball1.getE()+ball2.getE();
 		detecter = new CrushDetect();
+		G = new ForceField(250,250,10000);
 		//repaint();
 	}
 }
