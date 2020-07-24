@@ -10,3 +10,9 @@
 ![crush](picture/预碰撞.png)  
 逃逸速度:  
 ![EscSpeed](picture/逃逸速度.png)  
+## 主界面  
+![main](picture/主界面.png)  
+显示与控制界面：  
+![show](picture/显示.png)  
+![control](picture/记录位置速度.png)  
+![random](picture/随机激活.png)
