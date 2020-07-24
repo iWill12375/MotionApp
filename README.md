@@ -7,4 +7,4 @@
 @位于上部的参数显示面板，提供球体的实时位置和速度的显示功能  
 ## 二维球体运动过程中会出现碰撞、相互脱离开彼此不再回到原轨迹运行，因此需要处理这两类异常  
 逃逸速度:  
-![EscSpeed](https://github.com/iWill12375/-_/tree/master/picture/逃逸速度.png)  
+![EscSpeed](picture/逃逸速度.png)  
