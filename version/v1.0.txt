@@ -1,3 +1,0 @@
-This is MotionApp v1.0
-It's not perfect now, I am trying to fix it.
-Hope to provide more services for you.
